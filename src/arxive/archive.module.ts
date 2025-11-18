@@ -6,9 +6,10 @@ import { OrderItem } from 'src/order_items/order_items.entity';
 import { Payment } from 'src/payments/payments.entity';
 import { ArchiveService } from './archive.service';
 import { ArchiveController } from './archive.controller';
+import { Warehouse } from 'src/warehouse/warehouse.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderItem, Payment])],
+  imports: [TypeOrmModule.forFeature([Order, OrderItem, Payment, Warehouse])],
   providers: [ArchiveService],
   controllers: [ArchiveController],
 })

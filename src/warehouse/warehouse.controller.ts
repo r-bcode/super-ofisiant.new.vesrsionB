@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, ParseIntPipe, Put } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
 import { CreateWarehouseDto, UpdateWarehouseDto } from 'src/validators/warehouse.validator';
 import { Warehouse } from './warehouse.entity';
@@ -19,7 +19,10 @@ export class WarehouseController {
     return this.warehouseService.findAll();
   }
 
-  
+  @Get("get-total-spent-summary")
+  async getTotalSpentSummary() {
+    return this.warehouseService.getTotalSpentSummary();
+  }
 
   // ✅ Get one
   @Get(':id')
@@ -32,18 +35,25 @@ export class WarehouseController {
     @Body('productId', ParseIntPipe) productId: number,
     @Body('addedQty') addedQty: number,
     @Body('totalPrice') totalPrice: number,
+  @Body('minThreshold') minThreshold: number,
   ) {
-    return this.warehouseService.addStock(productId, addedQty, totalPrice);
+    return this.warehouseService.addStock(productId, addedQty, totalPrice, minThreshold);
   }
 
   // ✅ Update
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateWarehouseDto,
   ): Promise<Warehouse> {
     return this.warehouseService.update(id, dto);
   }
+
+  @Get('low-stock')
+async lowStock() {
+  return this.warehouseService.getLowStock();
+}
+
 
   // ✅ Delete
   @Delete(':id')

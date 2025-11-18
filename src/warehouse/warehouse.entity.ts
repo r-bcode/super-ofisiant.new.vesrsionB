@@ -24,6 +24,9 @@ export class Warehouse {
   quantity: number; // Ombordagi mavjud miqdor (masalan, 25 kg)
 
   @Column({ type: 'float', default: 0 })
+  minThreshold: number; // Minimal ogohlantirish chegarasi
+
+  @Column({ type: 'float', default: 0 })
   totalSpent: number; // Mahsulotga sarflangan jami summa (rashod)
 
 

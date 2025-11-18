@@ -128,4 +128,9 @@ export class ProductsController {
     await this.productsService.remove(id);
     return { message: '✅ Product and its image deleted successfully' };
   }
+
+  @Get('raw/finished')
+findFinished() {
+  return this.productsService.findFinishedProducts();
+}
 }

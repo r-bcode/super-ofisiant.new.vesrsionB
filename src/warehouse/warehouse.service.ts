@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { Warehouse } from './warehouse.entity';
 import { CreateWarehouseDto, UpdateWarehouseDto } from 'src/validators/warehouse.validator';
 
@@ -22,7 +22,18 @@ export class WarehouseService {
     return this.warehouseRepository.find({ relations: ['product'] });
   }
 
-async addStock(productId: number, addedQty: number, totalPrice: number) {
+async getLowStock() {
+  return this.warehouseRepository
+    .createQueryBuilder('w')
+    .leftJoinAndSelect('w.product', 'product')
+    .where('w.quantity <= w.minThreshold')
+    .getMany();
+}
+
+
+
+
+async addStock(productId: number, addedQty: number, totalPrice: number, minThreshold: number) {
   let warehouse = await this.warehouseRepository.findOne({ where: { productId } });
 
   if (!warehouse) {
@@ -30,14 +41,21 @@ async addStock(productId: number, addedQty: number, totalPrice: number) {
       productId,
       quantity: addedQty,
       totalSpent: totalPrice,
+      minThreshold, // ⭐ YANGI QO‘SHILDI
     });
   } else {
     warehouse.quantity += addedQty;
     warehouse.totalSpent += totalPrice;
+
+    // ⭐ agar foydalanuvchi threshold o‘rnatsa — yangilanadi
+    if (minThreshold !== undefined && minThreshold !== null) {
+      warehouse.minThreshold = minThreshold;
+    }
   }
 
   return this.warehouseRepository.save(warehouse);
 }
+
 
 
   // ✅ Get one
@@ -51,11 +69,53 @@ async addStock(productId: number, addedQty: number, totalPrice: number) {
   }
 
   // ✅ Update
-  async update(id: number, dto: UpdateWarehouseDto): Promise<Warehouse> {
-    const warehouse = await this.findOne(id);
-    Object.assign(warehouse, dto);
-    return this.warehouseRepository.save(warehouse);
+async update(id: number, dto: UpdateWarehouseDto): Promise<Warehouse> {
+  const warehouse = await this.findOne(id);
+
+  // ❗ Faqat mavjud bo'lgan fieldlar yangilanadi
+  if (dto.quantity !== undefined && dto.quantity !== null) {
+    warehouse.quantity = dto.quantity;
   }
+
+  if (dto.totalSpent !== undefined && dto.totalSpent !== null) {
+    warehouse.totalSpent = dto.totalSpent;
+  }
+
+  if (dto.minThreshold !== undefined && dto.minThreshold !== null) {
+    warehouse.minThreshold = dto.minThreshold;
+  }
+
+  // boshqa maydonlar bo‘lsa xuddi shunday qo‘shib ketaveramiz...
+
+  return this.warehouseRepository.save(warehouse);
+}
+
+async getTotalSpentSummary() {
+  const data = await this.warehouseRepository.find({
+    relations: ['product'],
+  });
+
+  let totalSpentAll = 0;
+
+  const productSummary = data.map((item) => {
+    totalSpentAll += item.totalSpent;
+
+    return {
+      productId: item.productId,
+      productName: item.product?.name || null,
+      totalSpent: item.totalSpent,
+      quantity: item.quantity,
+      minThreshold: item.minThreshold,
+    };
+  });
+
+  return {
+    totalSpentAll,     // Ombordagi barcha mahsulotlar bo‘yicha umumiy rashod
+    productSummary,    // Har bir mahsulot bo‘yicha alohida rashod
+  };
+}
+
+
 
   // ✅ Delete
   async remove(id: number): Promise<void> {

@@ -16,11 +16,7 @@ export class ArchiveController {
 
   @Delete()
   async clearOldOrders() {
-    return this.archiveService.archiveRecentMonthOrders();
+    return this.archiveService.deleteAllOldOrders();
   }
 
-  @Get()
-  async getArchives() {
-    return this.archiveService.getArchiveFiles();
-  }
 }

@@ -116,6 +116,11 @@ async getCheck(@Param('paymentId', ParseIntPipe) paymentId: number) {
   return this.paymentsService.getCheckByPaymentId(paymentId);
 }
 
+@Get('get/TotalSales')
+@UseGuards(JwtAuthGuard)
+async getTotalSalesUntilToday() {
+  return this.paymentsService.getTotalSalesUntilToday();
+}
 
   @UseGuards(JwtAuthGuard)
         @Roles(UserRole.ADMIN)

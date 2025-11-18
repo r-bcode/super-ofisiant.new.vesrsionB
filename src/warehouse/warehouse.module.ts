@@ -4,6 +4,7 @@ import { WarehouseController } from './warehouse.controller';
 import { Product } from 'src/products/products.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Warehouse } from './warehouse.entity';
+import { WarehouseGateway } from './warehouse.getway';
 
 @Module({
     imports: [
@@ -11,7 +12,7 @@ import { Warehouse } from './warehouse.entity';
 
     ],
 
-  providers: [WarehouseService],
+  providers: [WarehouseService, WarehouseGateway],
   controllers: [WarehouseController],
   exports: [WarehouseService]
 })

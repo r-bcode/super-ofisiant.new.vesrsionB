@@ -91,6 +91,21 @@ export class PaymentsService {
   return { payments: formatted };
 }
 
+async getTotalSalesUntilToday(): Promise<number> {
+  // bugungi kunni soat 23:59 ga qo‘yib olamiz
+  const now = new Date();
+  now.setHours(23, 59, 59, 999);
+
+  const { total } = await this.paymentRepo
+    .createQueryBuilder('payment')
+    .select('SUM(payment.total)', 'total')
+    .where('payment.createdAt <= :now', { now })
+    .getRawOne();
+
+  return parseFloat(total) || 0;
+}
+
+
     async printCheck(paymentId: number) {
     const checkData = await this.getCheckByPaymentId(paymentId);
     this.paymentsGateway.sendNewCheck(checkData); // 🔹 printerlarga yuborish

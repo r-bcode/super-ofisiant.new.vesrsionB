@@ -16,6 +16,11 @@ export class CreateWarehouseDto {
   @IsOptional()
   totalSpent?: number = 0; // Mahsulotga sarflangan jami summa
 
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  minThreshold?: number = 0; // Minimal ogohlantirish chegarasi
+
 
 }
 
@@ -35,6 +40,11 @@ export class UpdateWarehouseDto {
   @IsNumber()
   @Min(0)
   totalSpent?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  minThreshold?: number = 0;
 
 
 }

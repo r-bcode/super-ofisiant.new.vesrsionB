@@ -85,4 +85,11 @@ async remove(id: number): Promise<void> {
   const result = await this.productRepo.delete(id);
   if (!result.affected) throw new NotFoundException('Product not found');
 }
+
+async findFinishedProducts(): Promise<Product[]> {
+  return this.productRepo.find({
+    where: { isIngredient: true },
+    relations: ['category'],
+  });
+}
 }
