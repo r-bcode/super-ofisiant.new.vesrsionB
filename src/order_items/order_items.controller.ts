@@ -23,6 +23,8 @@ import { OrderItem } from './order_items.entity';
 // import { RolesGuard } from 'src/validators/RolesGuard/Roluse.guard';
 // import { OrderItem } from './order_items.entity';
 import { OrderItemsGateway } from './order_items.gateway';
+import { Roles } from 'src/validators/RolesGuard/Roles';
+import { UserRole } from 'src/users/user.enum';
 //  @UseGuards(JwtAuthGuard)
 @Controller('order-items')
 export class OrderItemsController {
@@ -30,6 +32,9 @@ export class OrderItemsController {
    private readonly orderItemsService: OrderItemsService, 
    private readonly orderItemsGateway: OrderItemsGateway,
     ) {}
+
+
+      @UseGuards(JwtAuthGuard)
 
   @Post()
   create(@Body() dto: CreateOrderItemDto) {
@@ -46,6 +51,9 @@ export class OrderItemsController {
     return this.orderItemsService.findOne(id);
   }
 
+
+    @UseGuards(JwtAuthGuard)
+    @Roles(UserRole.ADMIN)
   @Put('admin-cancel/:id')
   async adminCancel(@Param('id') id: number) {
     const item = await this.orderItemsService.findOne(id);
@@ -107,6 +115,9 @@ async getTopProducts(
   
   
 
+
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.orderItemsService.remove(id);

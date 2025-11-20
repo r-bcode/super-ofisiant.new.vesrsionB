@@ -116,6 +116,11 @@ export class ProductsController {
     return this.productsService.search(query);
   }
 
+  @Get('/raw/finished')
+  findFinishedProductsOnly() {
+    return this.productsService.findFinishedProductsOnly();
+  }
+
   // 🏷 Category filter route
   @Get('/category/:categoryId')
   findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
@@ -129,7 +134,7 @@ export class ProductsController {
     return { message: '✅ Product and its image deleted successfully' };
   }
 
-  @Get('raw/finished')
+  @Get('raw/materials')
 findFinished() {
   return this.productsService.findFinishedProducts();
 }

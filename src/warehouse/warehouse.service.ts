@@ -18,9 +18,17 @@ export class WarehouseService {
   }
 
   // ✅ Get all
-  async findAll(): Promise<Warehouse[]> {
-    return this.warehouseRepository.find({ relations: ['product'] });
-  }
+async findAll(): Promise<any[]> {
+  const data = await this.warehouseRepository.find({
+    relations: ['product'],
+  });
+
+  return data.map(item => ({
+    ...item,
+    quantity: parseFloat(item.quantity.toFixed(1)),   // ⭐ faqat 1 ta kasr xonasi
+  }));
+}
+
 
 async getLowStock() {
   return this.warehouseRepository
@@ -103,17 +111,19 @@ async getTotalSpentSummary() {
     return {
       productId: item.productId,
       productName: item.product?.name || null,
+      unitType: item.product?.unitType || null,
       totalSpent: item.totalSpent,
-      quantity: item.quantity,
+      quantity: parseFloat(item.quantity.toFixed(1)), // ⭐ 1 xonali kasr
       minThreshold: item.minThreshold,
     };
   });
 
   return {
-    totalSpentAll,     // Ombordagi barcha mahsulotlar bo‘yicha umumiy rashod
-    productSummary,    // Har bir mahsulot bo‘yicha alohida rashod
+    totalSpentAll,
+    productSummary,
   };
 }
+
 
 
 

@@ -1,8 +1,14 @@
-import { Controller, Get, Post, Delete, Param, Body, ParseIntPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, ParseIntPipe, Put, UseGuards } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
 import { CreateWarehouseDto, UpdateWarehouseDto } from 'src/validators/warehouse.validator';
 import { Warehouse } from './warehouse.entity';
+import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
+import { Roles } from 'src/validators/RolesGuard/Roles';
+import { UserRole } from 'src/users/user.enum';
 
+
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
 @Controller('warehouse')
 export class WarehouseController {
   constructor(private readonly warehouseService: WarehouseService) {}

@@ -12,7 +12,7 @@ import { Order } from 'src/orders/orders.entity';
 import { OrderItem } from 'src/order_items/order_items.entity';
 import { UserRole } from './user.enum';
 
-@Entity('usersOfitsiant1')
+@Entity('usersOfitsiantNew')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;

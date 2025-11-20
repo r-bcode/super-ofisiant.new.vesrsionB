@@ -1,8 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto, UpdateRecipeDto } from 'src/validators/recipes.validator';
 import { Recipe } from './recipes.entity';
+import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
+import { Roles } from 'src/validators/RolesGuard/Roles';
+import { UserRole } from 'src/users/user.enum';
 
+
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
 @Controller('recipes')
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}

@@ -18,7 +18,7 @@ import { Roles } from 'src/validators/RolesGuard/Roles';
 import { UserRole } from 'src/users/user.enum';
 
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
 @Controller('tables')
 export class TablesController {
   constructor(private readonly tablesService: TablesService) {}

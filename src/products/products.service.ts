@@ -20,6 +20,14 @@ export class ProductsService {
     return this.productRepo.save(product);
   }
 
+
+  async findFinishedProductsOnly(): Promise<Product[]> {
+  return this.productRepo.find({
+    where: { isIngredient: false },
+    relations: ['category'],
+  });
+}
+
   async findAll(): Promise<Product[]> {
     return this.productRepo.find({ relations: ['category'] });
   }

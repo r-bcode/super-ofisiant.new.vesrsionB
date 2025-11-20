@@ -251,6 +251,7 @@ const paidAmount =
 
 
   return {
+    id: payment.id,
     table: order.table?.table_number ?? 'Noma’lum stol',
     orderId: order.id,
     orderTime: order.createdAt,
