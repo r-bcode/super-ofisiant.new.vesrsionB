@@ -12,7 +12,7 @@ import { OrderItemsService } from './order_items.service';
 import { OrderItemStatus } from './order_items.enum';
 import { forwardRef, Inject } from '@nestjs/common';
 
-@WebSocketGateway(5501, { namespace: '/order-items', cors: true })
+@WebSocketGateway(5601, { namespace: '/order-items', cors: true })
 export class OrderItemsGateway {
   @WebSocketServer()
   server: Server;

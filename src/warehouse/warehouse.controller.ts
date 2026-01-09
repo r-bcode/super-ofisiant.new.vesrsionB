@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body, ParseIntPipe, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, ParseIntPipe, Put, UseGuards, Query } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
 import { CreateWarehouseDto, UpdateWarehouseDto } from 'src/validators/warehouse.validator';
 import { Warehouse } from './warehouse.entity';
@@ -45,6 +45,20 @@ export class WarehouseController {
   ) {
     return this.warehouseService.addStock(productId, addedQty, totalPrice, minThreshold);
   }
+
+
+@Get('spent-between/data')
+async getSpentBetween(
+  @Query('from') from: string,
+  @Query('to') to: string,
+) {
+  return this.warehouseService.getDailySpentBetweenDates(
+    new Date(from),
+    new Date(to),
+  );
+}
+
+
 
   // ✅ Update
   @Put(':id')

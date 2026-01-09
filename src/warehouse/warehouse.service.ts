@@ -125,7 +125,21 @@ async getTotalSpentSummary() {
 }
 
 
+async getDailySpentBetweenDates(from: Date, to: Date) {
+  const rows = await this.warehouseRepository
+    .createQueryBuilder('w')
+    .select("DATE(w.createdAt)", "date")
+    .addSelect("SUM(w.totalSpent)", "total")
+    .where("w.createdAt BETWEEN :from AND :to", { from, to })
+    .groupBy("DATE(w.createdAt)")
+    .orderBy("DATE(w.createdAt)", "ASC")
+    .getRawMany();
 
+  return rows.map(row => ({
+    date: row.date,
+    total: parseFloat(row.total) || 0,
+  }));
+}
 
   // ✅ Delete
   async remove(id: number): Promise<void> {

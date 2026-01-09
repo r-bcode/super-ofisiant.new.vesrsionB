@@ -9,7 +9,12 @@ import {
 import { Server } from 'socket.io';
 import { WarehouseService } from './warehouse.service';
 
-@WebSocketGateway(5503, { cors: true })
+@WebSocketGateway(5604, {
+  namespace: '/warehouse',
+  cors: true,
+  path: '/warehouse/socket.io',
+})
+
 export class WarehouseGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

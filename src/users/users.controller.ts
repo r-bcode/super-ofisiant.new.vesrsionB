@@ -18,8 +18,8 @@ import { Roles } from 'src/validators/RolesGuard/Roles';
 import { UserRole } from './user.enum';
 
 
-  @UseGuards(JwtAuthGuard)
-  @Roles(UserRole.ADMIN)
+//  @UseGuards(JwtAuthGuard)
+ // @Roles(UserRole.ADMIN)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

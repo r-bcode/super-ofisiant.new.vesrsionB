@@ -5,10 +5,12 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Product } from 'src/products/products.entity';
 
-@Entity('warehouse')
+@Entity('warehouse1')
 export class Warehouse {
   @PrimaryGeneratedColumn()
   id: number;
@@ -28,6 +30,11 @@ export class Warehouse {
 
   @Column({ type: 'float', default: 0 })
   totalSpent: number; // Mahsulotga sarflangan jami summa (rashod)
-
+  
+   @CreateDateColumn()
+    createdAt: Date;
+  
+    @UpdateDateColumn()
+    updatedAt: Date;
 
 }
