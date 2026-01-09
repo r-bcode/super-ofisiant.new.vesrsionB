@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { loginDto } from 'src/validators/login.validator';
+import { loginDto, PinLoginDto } from 'src/validators/login.validator';
 
 @Controller('auth')
 export class AuthController {
@@ -92,4 +92,51 @@ export class AuthController {
       throw new HttpException('Yaroqsiz refresh token!', HttpStatus.UNAUTHORIZED);
     }
   }
+
+
+  // src/auth/auth.controller.ts
+@Post('login/pin')
+async loginByPin(@Body() dto: PinLoginDto) {
+  const user = await this.usersService.findByPin(dto.pin);
+
+  if (!user) {
+    throw new HttpException(
+      'PIN noto‘g‘ri',
+      HttpStatus.UNAUTHORIZED,
+    );
+  }
+
+  if (!user.isActive) {
+    throw new HttpException(
+      'Foydalanuvchi bloklangan',
+      HttpStatus.FORBIDDEN,
+    );
+  }
+
+  const payload = {
+    sub: user.id,
+    name: user.name,
+    role: user.role,
+  };
+
+  const accessToken = this.jwtService.sign(payload, {
+    secret: process.env.JWT_SECRET,
+    expiresIn: '1h',
+  });
+
+  const refreshToken = this.jwtService.sign(payload, {
+    secret: process.env.JWT_REFRESH_SECRET,
+    expiresIn: '10d',
+  });
+
+  await this.usersService.saveRefreshToken(user.id, refreshToken);
+
+  return {
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    role: user.role,
+    name: user.name,
+  };
+}
+
 }

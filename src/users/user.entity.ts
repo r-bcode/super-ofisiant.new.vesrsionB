@@ -30,6 +30,10 @@ export class User {
 })
 role: UserRole;
 
+
+@Column({ length: 4, unique: true })
+pin: string;
+
   @Column({ default: true })
   isActive: boolean;
 

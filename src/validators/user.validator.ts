@@ -15,6 +15,10 @@ export class CreateUserDto{
   @IsEnum(UserRole)
   role?: UserRole;
 
+  @IsString()
+  @IsNotEmpty()
+  pin?: string;
+
     
 }
 
@@ -31,6 +35,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role?: UserRole;
+
+  @IsOptional()
+  @IsString()
+  pin?: string;
 
   @IsOptional()
   @IsBoolean()
