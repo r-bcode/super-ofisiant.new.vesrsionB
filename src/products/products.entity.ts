@@ -17,7 +17,7 @@ export enum UnitType {
   LITER = 'liter',
 }
 
-@Entity('productsOfitsiantNew')
+@Entity('productswowfood')
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;

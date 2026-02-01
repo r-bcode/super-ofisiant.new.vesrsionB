@@ -13,7 +13,7 @@ import { Product } from 'src/products/products.entity';
 import { User } from 'src/users/user.entity'; // assigned_to uchun
 import { OrderItemStatus } from './order_items.enum';
 
-@Entity('order_itemsOfitdiantNew')
+@Entity('order_itemswowfood')
 export class OrderItem {
   @PrimaryGeneratedColumn()
   id: number;

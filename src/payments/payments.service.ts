@@ -315,25 +315,43 @@ async getSalesByCategory(): Promise<{ category: string; total: number }[]> {
 }
 
 
-async getDailySalesInRange(from: string, to: string): Promise<{ date: string; total: number }[]> {
+
+
+
+async getDailySalesInRange(from: string, to: string) {
   const startDate = new Date(from);
   const endDate = new Date(to);
   endDate.setHours(23, 59, 59, 999);
 
   const result = await this.paymentRepo
     .createQueryBuilder('payment')
-    .select("TO_CHAR(payment.createdAt, 'YYYY-MM-DD')", 'date') // Postgres uchun
+    .select("TO_CHAR(payment.createdAt, 'YYYY-MM-DD')", 'date')
     .addSelect('SUM(payment.total)', 'total')
     .where('payment.createdAt BETWEEN :from AND :to', { from: startDate, to: endDate })
     .groupBy("TO_CHAR(payment.createdAt, 'YYYY-MM-DD')")
     .orderBy('date', 'ASC')
     .getRawMany();
 
-  return result.map((r) => ({
-    date: r.date,
-    total: parseFloat(r.total) || 0,
-  }));
+  const map = new Map(result.map(r => [r.date, Number(r.total) || 0]));
+
+  // from->to oralig'ida har kunni to'ldirish
+  const out: { date: string; total: number }[] = [];
+  const cur = new Date(startDate);
+  cur.setHours(0, 0, 0, 0);
+
+  const last = new Date(endDate);
+  last.setHours(0, 0, 0, 0);
+
+  while (cur <= last) {
+    const key = cur.toISOString().slice(0, 10);
+    out.push({ date: key, total: map.get(key) ?? 0 });
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  return out;
 }
+
+
 
 
 

@@ -9,7 +9,7 @@ import {
 import { Server } from 'socket.io';
 import { WarehouseService } from './warehouse.service';
 
-@WebSocketGateway(5604, {
+@WebSocketGateway(5804, {
   namespace: '/warehouse',
   cors: true,
   path: '/warehouse/socket.io',
