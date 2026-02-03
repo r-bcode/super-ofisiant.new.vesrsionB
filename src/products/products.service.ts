@@ -3,8 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Product } from './products.entity';
-import { CreateProductDto } from 'src/validators/product.validator';
-import { UpdateProductDto } from 'src/validators/product.validator';
+import { CreateProductDto } from '../validators/product.validator';
+import { UpdateProductDto } from '../validators/product.validator';
 import { join } from 'path';
 import { existsSync, unlink } from 'fs';
 

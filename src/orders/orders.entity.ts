@@ -9,10 +9,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
-import { Table } from 'src/tables/tabels.entity';
+import { Table } from '../tables/tabels.entity';
 import { OrderStatus } from './orders.enum';
-import { OrderItem } from 'src/order_items/order_items.entity';
-import { Payment } from 'src/payments/payments.entity';
+import { OrderItem } from '../order_items/order_items.entity';
+import { Payment } from '../payments/payments.entity';
 
 @Entity('orderswowfood')
 export class Order {
@@ -49,6 +49,8 @@ export class Order {
   @OneToMany(() => Payment, (payment) => payment.order)
 payments: Payment[];
 
+   @Column({ type: 'text', nullable: true })
+  comment?: string;
 
   // 🟢 Add this:
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })

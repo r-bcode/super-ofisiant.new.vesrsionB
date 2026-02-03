@@ -1,4 +1,4 @@
-// src/payments/payments.controller.ts
+// ../payments/payments.controller.ts
 import {
   BadRequestException,
   Body,
@@ -13,11 +13,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { CreatePaymentDto } from 'src/validators/paymes.validator';
-import { UpdatePaymentDto } from 'src/validators/paymes.validator';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
-import { Roles } from 'src/validators/RolesGuard/Roles';
-import { UserRole } from 'src/users/user.enum';
+import { CreatePaymentDto } from '../validators/paymes.validator';
+import { UpdatePaymentDto } from '../validators/paymes.validator';
+import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
+import { Roles } from '../validators/RolesGuard/Roles';
+import { UserRole } from '../users/user.enum';
 
 
 

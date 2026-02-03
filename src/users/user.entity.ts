@@ -1,4 +1,4 @@
- // src/users/user.entity.ts
+ // ../users/user.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 
 
-import { Order } from 'src/orders/orders.entity';
-import { OrderItem } from 'src/order_items/order_items.entity';
+import { Order } from '../orders/orders.entity';
+import { OrderItem } from '../order_items/order_items.entity';
 import { UserRole } from './user.enum';
 
 @Entity('userswowfood')

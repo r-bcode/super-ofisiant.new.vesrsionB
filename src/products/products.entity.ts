@@ -7,8 +7,8 @@ import {
    OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Category } from 'src/categories/catefories.entity';
-import { OrderItem } from 'src/order_items/order_items.entity';
+import { Category } from '../categories/catefories.entity';
+import { OrderItem } from '../order_items/order_items.entity';
 
 export enum UnitType {
   PIECE = 'ta',

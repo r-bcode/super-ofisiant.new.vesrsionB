@@ -1,4 +1,4 @@
-// src/warehouse/warehouse.entity.ts
+// ../warehouse/warehouse.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,7 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Product } from 'src/products/products.entity';
+import { Product } from '../products/products.entity';
 
 @Entity('warehousewowfood')
 export class Warehouse {

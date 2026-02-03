@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Recipe } from './recipes.entity';
 import { Repository } from 'typeorm';
-import { CreateRecipeDto, UpdateRecipeDto } from 'src/validators/recipes.validator';
+import { CreateRecipeDto, UpdateRecipeDto } from '../validators/recipes.validator';
 
 @Injectable()
 export class RecipesService {

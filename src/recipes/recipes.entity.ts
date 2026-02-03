@@ -6,7 +6,7 @@ import {
   Column,
   JoinColumn,
 } from 'typeorm';
-import { Product } from 'src/products/products.entity';
+import { Product } from '../products/products.entity';
 
 @Entity('recipeswowfood')
 export class Recipe {

@@ -1,10 +1,10 @@
-// src/categories/categories.service.ts
+// ../categories/categories.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './catefories.entity';
-import { CreateCategoryDto } from 'src/validators/categories.validator';
-import { UpdateCategoryDto } from 'src/validators/categories.validator';
+import { CreateCategoryDto } from '../validators/categories.validator';
+import { UpdateCategoryDto } from '../validators/categories.validator';
 
 @Injectable()
 export class CategoriesService {

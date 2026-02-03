@@ -3,13 +3,13 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './orders.entity';
-import { User } from 'src/users/user.entity';
-import { Table } from 'src/tables/tabels.entity';
-import { OrderItem } from 'src/order_items/order_items.entity';
-import { OrderItemsModule } from 'src/order_items/order_items.module';
+import { User } from '../users/user.entity';
+import { Table } from '../tables/tabels.entity';
+import { OrderItem } from '../order_items/order_items.entity';
+import { OrderItemsModule } from '../order_items/order_items.module';
 import { OrdersGateway } from './orders.gateway';
-import { Warehouse } from 'src/warehouse/warehouse.entity';
-import { Recipe } from 'src/recipes/recipes.entity';
+import { Warehouse } from '../warehouse/warehouse.entity';
+import { Recipe } from '../recipes/recipes.entity';
 
 
 @Module({

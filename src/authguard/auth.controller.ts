@@ -6,9 +6,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { loginDto, PinLoginDto } from 'src/validators/login.validator';
+import { loginDto, PinLoginDto } from '../validators/login.validator';
 
 @Controller('auth')
 export class AuthController {
@@ -94,7 +94,7 @@ export class AuthController {
   }
 
 
-  // src/auth/auth.controller.ts
+  // ../auth/auth.controller.ts
 @Post('login/pin')
 async loginByPin(@Body() dto: PinLoginDto) {
   const user = await this.usersService.findByPin(dto.pin);

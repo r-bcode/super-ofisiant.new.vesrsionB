@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from 'src/validators/categories.validator';
-import { UpdateCategoryDto } from 'src/validators/categories.validator';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
-import { Roles } from 'src/validators/RolesGuard/Roles';
-import { UserRole } from 'src/users/user.enum';
+import { CreateCategoryDto } from '../validators/categories.validator';
+import { UpdateCategoryDto } from '../validators/categories.validator';
+import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
+import { Roles } from '../validators/RolesGuard/Roles';
+import { UserRole } from '../users/user.enum';
 
 
   @UseGuards(JwtAuthGuard)

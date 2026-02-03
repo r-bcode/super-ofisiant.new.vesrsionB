@@ -1,4 +1,4 @@
-// src/products/products.controller.ts
+// ../products/products.controller.ts
 import {
   Body,
   Controller,
@@ -15,11 +15,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { CreateProductDto } from 'src/validators/product.validator';
-import { UpdateProductDto } from 'src/validators/product.validator';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
-import { Roles } from 'src/validators/RolesGuard/Roles';
-import { UserRole } from 'src/users/user.enum';
+import { CreateProductDto } from '../validators/product.validator';
+import { UpdateProductDto } from '../validators/product.validator';
+import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
+import { Roles } from '../validators/RolesGuard/Roles';
+import { UserRole } from '../users/user.enum';
 import { Product } from './products.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';

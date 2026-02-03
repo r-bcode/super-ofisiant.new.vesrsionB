@@ -1,11 +1,11 @@
-// src/payments/payments.service.ts
+// ../payments/payments.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual  } from 'typeorm';
 import { Payment } from './payments.entity';
-import { CreatePaymentDto } from 'src/validators/paymes.validator';
-import { UpdatePaymentDto } from 'src/validators/paymes.validator';
-import { isActiveItemStatus } from 'src/isactive';
+import { CreatePaymentDto } from '../validators/paymes.validator';
+import { UpdatePaymentDto } from '../validators/paymes.validator';
+import { isActiveItemStatus } from '../isactive';
 import { PaymentsGateway } from './payments.getway';
 
 @Injectable()
@@ -204,7 +204,7 @@ async getSalesBetweenDates(from: Date, to: Date): Promise<number> {
 async getCheckByPaymentId(paymentId: number): Promise<any> {
   const payment = await this.paymentRepo.findOne({
     where: { id: paymentId },
-    relations: ['order', 'order.table', 'order.items', 'order.items.product', 'user'], // 👈 user qo‘shildi
+    relations: ['order', 'order.table', 'order.items', 'order.items.product', 'user'], // ✅ comment olib tashlandi
   });
 
   if (!payment) {
@@ -213,57 +213,55 @@ async getCheckByPaymentId(paymentId: number): Promise<any> {
 
   const order = payment.order;
 
-  // canceled bo‘lmagan itemlar
   const validItems = (order.items || []).filter((item) => {
     const st = (item.status || '').toString().trim().toLowerCase();
     return st !== 'canceled' && st !== 'cancelled';
   });
 
-const items = validItems.map((item) => {
-  const qty = Number(item.quantity ?? 0);
-  const line = Number(item.price ?? 0);
-  const unitFromLine = qty > 0 ? line / qty : 0;
-  const fallbackUnit = Number(item.product?.price ?? 0);
-  const unitPrice = unitFromLine > 0 ? unitFromLine : fallbackUnit;
+  const items = validItems.map((item) => {
+    const qty = Number(item.quantity ?? 0);
+    const line = Number(item.price ?? 0);
+    const unitFromLine = qty > 0 ? line / qty : 0;
+    const fallbackUnit = Number(item.product?.price ?? 0);
+    const unitPrice = unitFromLine > 0 ? unitFromLine : fallbackUnit;
 
-  return {
-    productName: item.product?.name ?? 'N/A',
-    unitType: item.product?.unitType ?? 'piece',  // 👈 qo‘shildi
-    unitPrice,
-    quantity: qty,
-    total: line > 0 ? line : unitPrice * qty,
-  };
-});
+    return {
+      productName: item.product?.name ?? 'N/A',
+      unitType: item.product?.unitType ?? 'piece',
+      unitPrice,
+      quantity: qty,
+      total: line > 0 ? line : unitPrice * qty,
+    };
+  });
 
+  const totalAmount = items.reduce((acc, cur) => acc + cur.total, 0);
 
-const totalAmount = items.reduce((acc, cur) => acc + cur.total, 0);
+  const serviceFee =
+    order.isTakeaway
+      ? 0
+      : payment.serviceFee != null
+        ? Number(payment.serviceFee)
+        : Math.round((totalAmount * 10) / 100);
 
-// Agar isTakeaway = true bo‘lsa, xizmat haqi 0 bo‘ladi
-const serviceFee =
-  payment.order.isTakeaway
-    ? 0
-    : payment.serviceFee != null
-      ? Number(payment.serviceFee)
-      : Math.round((totalAmount * 10) / 100);
-
-const paidAmount =
-  payment.total != null ? Number(payment.total) : totalAmount + serviceFee;
-
+  const paidAmount =
+    payment.total != null ? Number(payment.total) : totalAmount + serviceFee;
 
   return {
     id: payment.id,
     table: order.table?.table_number ?? 'Noma’lum stol',
     orderId: order.id,
     orderTime: order.createdAt,
+    comment: order.comment ?? '', // ✅ shu kerak
     items,
     totalAmount,
     serviceFee,
     paidAmount,
     paidBy: payment.paidBy,
-    paidByName: payment.user?.name ?? 'Noma’lum', // 👈 foydalanuvchi ismi qo‘shildi
+    paidByName: payment.user?.name ?? 'Noma’lum',
     paidAt: payment.createdAt,
   };
 }
+
 
 
 

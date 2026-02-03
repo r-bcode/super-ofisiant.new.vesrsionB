@@ -1,10 +1,10 @@
-// src/tables/tables.service.ts
+// ../tables/tables.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Table } from './tabels.entity';
-import { CreateTableDto } from 'src/validators/tables.validator';
-import { UpdateTableDto } from 'src/validators/tables.validator';
+import { CreateTableDto } from '../validators/tables.validator';
+import { UpdateTableDto } from '../validators/tables.validator';
 
 @Injectable()
 export class TablesService {

@@ -1,10 +1,10 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, DataSource,  In, Repository } from 'typeorm';
+import {  DataSource,   Repository } from 'typeorm';
 import { OrderItem } from './order_items.entity';
-import { CreateOrderItemDto, UpdateOrderItemDto } from 'src/validators/order_items.entity';
+import { CreateOrderItemDto, UpdateOrderItemDto } from '../validators/order_items.entity';
 import { OrderItemsGateway } from './order_items.gateway';
-import { Product } from 'src/products/products.entity';
+import { Product } from '../products/products.entity';
 @Injectable()
 export class OrderItemsService {
   constructor(

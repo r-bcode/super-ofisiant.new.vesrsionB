@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
 import { WarehouseController } from './warehouse.controller';
-import { Product } from 'src/products/products.entity';
+import { Product } from '../products/products.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Warehouse } from './warehouse.entity';
 import { WarehouseGateway } from './warehouse.getway';

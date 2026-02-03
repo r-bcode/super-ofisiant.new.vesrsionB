@@ -8,8 +8,8 @@ import { UpdateOrderDto } from 'src/validators/orders.validator';
 import { OrderStatus } from './orders.enum';
 import { OrdersGateway } from './orders.gateway';
 // import { OrderItem } from 'src/order_items/order_items.entity';
-import { Warehouse } from 'src/warehouse/warehouse.entity';
-import { Recipe } from 'src/recipes/recipes.entity';
+import { Warehouse } from '../warehouse/warehouse.entity';
+import { Recipe } from '../recipes/recipes.entity';
 
 @Injectable()
 export class OrdersService {

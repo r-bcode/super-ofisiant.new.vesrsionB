@@ -8,8 +8,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { PaymentType } from './payments.enum';
-import { Order } from 'src/orders/orders.entity';
-import { User } from 'src/users/user.entity';
+import { Order } from '../orders/orders.entity';
+import { User } from '../users/user.entity';
 
 @Entity('paymentswowfood')
 export class Payment {

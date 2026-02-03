@@ -1,9 +1,9 @@
 // src/archive/archive.controller.ts
-import { Controller, Delete, Get, UseGuards } from '@nestjs/common';
+import { Controller, Delete,  UseGuards } from '@nestjs/common';
 import { ArchiveService } from './archive.service';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
-import { UserRole } from 'src/users/user.enum';
-import { Roles } from 'src/validators/RolesGuard/Roles';
+import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
+import { UserRole } from '../users/user.enum';
+import { Roles } from '../validators/RolesGuard/Roles';
 
 
 

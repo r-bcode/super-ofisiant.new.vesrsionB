@@ -1,4 +1,4 @@
-// src/users/users.controller.ts
+// ../users/users.controller.ts
 import {
   Body,
   Controller,
@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from 'src/validators/user.validator';
-import { UpdateUserDto } from 'src/validators/user.validator';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
-import { Roles } from 'src/validators/RolesGuard/Roles';
-import { UserRole } from './user.enum';
+import { CreateUserDto } from '../validators/user.validator';
+import { UpdateUserDto } from '../validators/user.validator';
+// import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
+// import { Roles } from '../validators/RolesGuard/Roles';
+// import { UserRole } from './user.enum';
 
 
 //  @UseGuards(JwtAuthGuard)

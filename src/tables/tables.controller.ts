@@ -1,4 +1,4 @@
-// src/tables/tables.controller.ts
+// ../tables/tables.controller.ts
 import {
   Body,
   Controller,
@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TablesService } from './tables.service';
-import { CreateTableDto } from 'src/validators/tables.validator';
-import { UpdateTableDto } from 'src/validators/tables.validator';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
-import { Roles } from 'src/validators/RolesGuard/Roles';
-import { UserRole } from 'src/users/user.enum';
+import { CreateTableDto } from '../validators/tables.validator';
+import { UpdateTableDto } from '../validators/tables.validator';
+import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
+import { Roles } from '../validators/RolesGuard/Roles';
+import { UserRole } from '../users/user.enum';
 
 
   @UseGuards(JwtAuthGuard)

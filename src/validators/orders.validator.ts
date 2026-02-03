@@ -1,5 +1,5 @@
 // src/orders/dto/create-order.dto.ts
-import { IsBoolean, IsEnum, IsInt, IsOptional, IsPositive } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
 import { OrderStatus } from 'src/orders/orders.enum';
 
 export class CreateOrderDto {
@@ -18,6 +18,10 @@ export class CreateOrderDto {
   @IsEnum(OrderStatus)
   @IsOptional()
   status?: OrderStatus;
+
+  @IsOptional()
+  @IsString()
+  comment?: string;
 }
 
 
@@ -35,6 +39,10 @@ export class UpdateOrderDto {
   @IsOptional()
   @IsBoolean()
   isTakeaway?: boolean;
+
+  @IsOptional()
+  @IsString()
+  comment?: string;
 
   @IsOptional()
   @IsEnum(OrderStatus)

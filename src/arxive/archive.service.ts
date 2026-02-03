@@ -1,11 +1,11 @@
-// src/archive/archive.service.ts
+// ../archive/archive.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
-import { Order } from 'src/orders/orders.entity';
-import { OrderItem } from 'src/order_items/order_items.entity';
-import { Payment } from 'src/payments/payments.entity';
-import { Warehouse } from 'src/warehouse/warehouse.entity';
+import { Order } from '../orders/orders.entity';
+import { OrderItem } from '../order_items/order_items.entity';
+import { Payment } from '../payments/payments.entity';
+import { Warehouse } from '../warehouse/warehouse.entity';
 
 @Injectable()
 export class ArchiveService {

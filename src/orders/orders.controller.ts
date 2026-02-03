@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { OrdersGateway } from './orders.gateway';   // 👈 qo‘shildi
-import { CreateOrderDto, UpdateOrderDto } from 'src/validators/orders.validator';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
+import { CreateOrderDto, UpdateOrderDto } from '../validators/orders.validator';
+import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
 
 @Controller('orders')
 export class OrdersController {

@@ -1,4 +1,4 @@
-// src/order-items/order-items.controller.ts
+// ../order-items/order-items.controller.ts
 import {
   Body,
   Controller,
@@ -16,15 +16,15 @@ import {
 } from '@nestjs/common';
 import { OrderItemStatus } from './order_items.enum';
 import { OrderItemsService } from './order_items.service';
-import { CreateOrderItemDto } from 'src/validators/order_items.entity';
-import { UpdateOrderItemDto } from 'src/validators/order_items.entity';
-import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
-import { OrderItem } from './order_items.entity';
-// import { RolesGuard } from 'src/validators/RolesGuard/Roluse.guard';
+import { CreateOrderItemDto } from '../validators/order_items.entity';
+import { UpdateOrderItemDto } from '../validators/order_items.entity';
+import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
+// import { OrderItem } from './order_items.entity';
+// import { RolesGuard } from '../validators/RolesGuard/Roluse.guard';
 // import { OrderItem } from './order_items.entity';
 import { OrderItemsGateway } from './order_items.gateway';
-import { Roles } from 'src/validators/RolesGuard/Roles';
-import { UserRole } from 'src/users/user.enum';
+import { Roles } from '../validators/RolesGuard/Roles';
+import { UserRole } from '../users/user.enum';
 //  @UseGuards(JwtAuthGuard)
 @Controller('order-items')
 export class OrderItemsController {

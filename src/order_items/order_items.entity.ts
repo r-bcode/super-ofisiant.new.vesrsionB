@@ -1,4 +1,4 @@
-// src/order-items/order-item.entity.ts
+// ../order-items/order-item.entity.ts
 import {
   Column,
   Entity,
@@ -8,9 +8,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Order } from 'src/orders/orders.entity';
-import { Product } from 'src/products/products.entity';
-import { User } from 'src/users/user.entity'; // assigned_to uchun
+import { Order } from '../orders/orders.entity';
+import { Product } from '../products/products.entity';
+import { User } from '../users/user.entity'; // assigned_to uchun
 import { OrderItemStatus } from './order_items.enum';
 
 @Entity('order_itemswowfood')

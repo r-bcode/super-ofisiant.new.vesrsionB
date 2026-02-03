@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 import { Warehouse } from './warehouse.entity';
-import { CreateWarehouseDto, UpdateWarehouseDto } from 'src/validators/warehouse.validator';
+import { CreateWarehouseDto, UpdateWarehouseDto } from '../validators/warehouse.validator';
 
 @Injectable()
 export class WarehouseService {
