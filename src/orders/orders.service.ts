@@ -7,7 +7,7 @@ import { CreateOrderDto } from 'src/validators/orders.validator';
 import { UpdateOrderDto } from 'src/validators/orders.validator';
 import { OrderStatus } from './orders.enum';
 import { OrdersGateway } from './orders.gateway';
-// import { OrderItem } from 'src/order_items/order_items.entity';
+ import { OrderItem } from 'src/order_items/order_items.entity';
 import { Warehouse } from '../warehouse/warehouse.entity';
 import { Recipe } from '../recipes/recipes.entity';
 
@@ -23,8 +23,8 @@ export class OrdersService {
     @InjectRepository(Recipe)
     private recipeRepo: Repository<Recipe>,
 
-    // @InjectRepository(OrderItem) // 🟢 qo‘shdik
-    // private orderItemRepo: Repository<OrderItem>,
+     @InjectRepository(OrderItem) // 🟢 qo‘shdik
+     private orderItemRepo: Repository<OrderItem>,
 
     private readonly ordersGateway: OrdersGateway, 
   ) {}
@@ -53,10 +53,10 @@ export class OrdersService {
     if (!order) throw new NotFoundException('Order not found');
 
     // 🖨️ order_items jadvalini yangilaymiz
-    // await this.orderItemRepo.update(
-    //   { orderId }, // qaysi orderga tegishli itemlar
-    //   { isPrinted: true } // yangilanish
-    // );
+     await this.orderItemRepo.update(
+       { orderId }, // qaysi orderga tegishli itemlar
+       { isPrinted: true } // yangilanish
+     );
 
     return order;
   }

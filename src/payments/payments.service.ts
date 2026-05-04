@@ -7,13 +7,16 @@ import { CreatePaymentDto } from '../validators/paymes.validator';
 import { UpdatePaymentDto } from '../validators/paymes.validator';
 import { isActiveItemStatus } from '../isactive';
 import { PaymentsGateway } from './payments.getway';
-
+import { OrderItem } from '../order_items/order_items.entity';
 @Injectable()
 export class PaymentsService {
   constructor(
     @InjectRepository(Payment)
     private paymentRepo: Repository<Payment>,
      private paymentsGateway: PaymentsGateway, // ðŸ”¹ qoâ€˜shildi
+
+  @InjectRepository(OrderItem)
+  private itemRepo: Repository<OrderItem>, 
   ) {}
 
   async create(dto: CreatePaymentDto): Promise<Payment> {
@@ -293,22 +296,19 @@ async getWaitersSalesForDay(date: string): Promise<
   });
 }
 
-
 async getSalesByCategory(): Promise<{ category: string; total: number }[]> {
-  const result = await this.paymentRepo
-    .createQueryBuilder('payment')
-    .leftJoin('payment.order', 'order')
-    .leftJoin('order.items', 'item')
+  const result = await this.itemRepo
+    .createQueryBuilder('item')
     .leftJoin('item.product', 'product')
-    .leftJoin('product.category', 'category') // JOIN category
-    .select('category.name', 'category') // name ni olish
-    .addSelect('SUM(item.price * item.quantity)', 'total')
+    .leftJoin('product.category', 'category')
+    .select('category.name', 'category')
+    .addSelect('SUM(item.price)', 'total') // í±ˆ FIX SHU
     .groupBy('category.name')
     .getRawMany();
 
   return result.map((r) => ({
     category: r.category,
-    total: parseFloat(r.total) || 0,
+    total: Number(r.total) || 0,
   }));
 }
 

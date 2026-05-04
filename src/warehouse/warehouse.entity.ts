@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Product } from '../products/products.entity';
 
-@Entity('warehousewowfood')
+@Entity('warehouse_demo')
 export class Warehouse {
   @PrimaryGeneratedColumn()
   id: number;

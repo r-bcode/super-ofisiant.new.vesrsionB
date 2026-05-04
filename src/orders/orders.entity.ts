@@ -14,7 +14,7 @@ import { OrderStatus } from './orders.enum';
 import { OrderItem } from '../order_items/order_items.entity';
 import { Payment } from '../payments/payments.entity';
 
-@Entity('orderswowfood')
+@Entity('orders_demo')
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
