@@ -7,7 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
-@WebSocketGateway(5103, { namespace: '/payment', cors: true })
+@WebSocketGateway(5853, { namespace: '/payment', cors: true })
 export class PaymentsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

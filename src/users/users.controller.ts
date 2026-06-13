@@ -9,13 +9,14 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+     Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from '../validators/user.validator';
 import { UpdateUserDto } from '../validators/user.validator';
-// import { JwtAuthGuard } from '../authguard/jwt-auth.guard';
-// import { Roles } from '../validators/RolesGuard/Roles';
-// import { UserRole } from './user.enum';
+import { JwtAuthGuard } from 'src/authguard/jwt-auth.guard';
+import { UserRole } from './user.enum';
+import { Roles } from 'src/validators/RolesGuard/Roles';
 
 
 //  @UseGuards(JwtAuthGuard)
@@ -49,6 +50,13 @@ async getUsersByRole(@Param('role') role: string) {
   return this.usersService.findByRole(role);
 }
 
+
+     @UseGuards(JwtAuthGuard)
+ @Roles(UserRole.ADMIN)
+  @Patch(':id/toggle-active')
+toggleActive(@Param('id') id: number) {
+  return this.usersService.toggleActive(+id);
+}
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {

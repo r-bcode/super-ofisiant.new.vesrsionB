@@ -14,7 +14,7 @@ import { OrderStatus } from './orders.enum';
 import { OrderItem } from '../order_items/order_items.entity';
 import { Payment } from '../payments/payments.entity';
 
-@Entity('orders_demo')
+@Entity('orders_mi')
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
@@ -26,12 +26,12 @@ export class Order {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column()
-  tableId: number;
+  @Column({ nullable: true })
+tableId?: number;
 
-  @ManyToOne(() => Table)
-  @JoinColumn({ name: 'tableId' })
-  table: Table;
+@ManyToOne(() => Table, { nullable: true })
+@JoinColumn({ name: 'tableId' })
+table?: Table;
 
   @Column({ default: false })
   isTakeaway: boolean;

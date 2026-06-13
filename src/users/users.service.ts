@@ -77,6 +77,14 @@ async validatePin(inputPin: string, hashedPin: string) {
 
 
 
+  async toggleActive(id: number): Promise<User> {
+    const user = await this.findById(id);
+  
+    user.isActive = !user.isActive;
+  
+    return this.userRepo.save(user);
+  }
+
 
   async findById(id: number): Promise<User> {
     const user = await this.userRepo.findOne({ where: { id } });

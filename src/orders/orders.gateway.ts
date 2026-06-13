@@ -8,7 +8,7 @@ import {
 import { Server } from 'socket.io';
 import { Order } from './orders.entity';
 
-@WebSocketGateway(5102, { namespace: '/order', cors: true })
+@WebSocketGateway(5852, { namespace: '/order', cors: true })
 export class OrdersGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

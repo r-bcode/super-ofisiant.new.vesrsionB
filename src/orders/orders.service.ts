@@ -44,20 +44,16 @@ export class OrdersService {
 
 
 
-  async getOrderForPrint(orderId: number): Promise<Order> {
+   async getOrderForPrint(orderId: number): Promise<Order> {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
       relations: ['table', 'items', 'items.product', 'user'],
     });
-
-    if (!order) throw new NotFoundException('Order not found');
-
-    // 🖨️ order_items jadvalini yangilaymiz
-     await this.orderItemRepo.update(
-       { orderId }, // qaysi orderga tegishli itemlar
-       { isPrinted: true } // yangilanish
-     );
-
+  
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+  
     return order;
   }
 

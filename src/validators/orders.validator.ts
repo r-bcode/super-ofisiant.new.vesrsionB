@@ -9,6 +9,7 @@ export class CreateOrderDto {
 
   @IsInt()
   @IsPositive()
+  @IsOptional()
   tableId: number;
 
   @IsBoolean()

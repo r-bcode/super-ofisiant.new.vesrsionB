@@ -11,7 +11,7 @@ import { PaymentType } from './payments.enum';
 import { Order } from '../orders/orders.entity';
 import { User } from '../users/user.entity';
 
-@Entity('payments_demo')
+@Entity('payments_mi')
 export class Payment {
   @PrimaryGeneratedColumn()
   id: number;
