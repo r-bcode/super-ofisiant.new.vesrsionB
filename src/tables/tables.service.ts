@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Table } from './tabels.entity';
 import { CreateTableDto } from '../validators/tables.validator';
 import { UpdateTableDto } from '../validators/tables.validator';
+import { TableStatus } from './table.enum';
 
 @Injectable()
 export class TablesService {
@@ -40,6 +41,25 @@ async findAll(): Promise<Table[]> {
   }
 
 
+  async findAllWithActiveOrder(): Promise<any[]> {
+    return this.tableRepo
+      .createQueryBuilder('table')
+      .leftJoinAndSelect(
+        'table.orders',
+        'order',
+        'order.status NOT IN (:...statuses)',
+        { statuses: ['paid', 'cancelled'] }
+      )
+      .leftJoinAndSelect('order.user', 'user')  // ← bu bo'lishi shart
+      .orderBy('table.table_number', 'ASC')
+      .getMany();
+  }
+
+  async updateStatus(id: number, status: TableStatus): Promise<Table> {
+  const table = await this.findOne(id);
+  table.status = status;
+  return this.tableRepo.save(table);
+}
   async getTableStatuses() {
     const tables = await this.tableRepo.find({
       relations: ['orders', 'orders.items', 'orders.items.product'],

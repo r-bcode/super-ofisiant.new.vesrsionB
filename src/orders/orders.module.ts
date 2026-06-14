@@ -10,15 +10,18 @@ import { OrderItemsModule } from '../order_items/order_items.module';
 import { OrdersGateway } from './orders.gateway';
 import { Warehouse } from '../warehouse/warehouse.entity';
 import { Recipe } from '../recipes/recipes.entity';
+import { TablesModule } from 'src/tables/tables.module';
 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, User, Table, OrderItem, Warehouse, Recipe]),
-    OrderItemsModule
+    OrderItemsModule,
+    TablesModule
   ],
   providers: [OrdersService, OrdersGateway],
   controllers: [OrdersController],
   exports: [OrdersService],
+ 
 })
 export class OrdersModule {}

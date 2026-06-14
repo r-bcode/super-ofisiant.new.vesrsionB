@@ -1,5 +1,6 @@
 // src/tables/dto/create-table.dto.ts
-import { IsInt, IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
+import { TableStatus } from 'src/tables/table.enum';
 
 export class CreateTableDto {
   @IsInt()
@@ -9,6 +10,11 @@ export class CreateTableDto {
   @IsString()
   @IsOptional()
   location: string;
+
+    // 🔥 optional status
+    @IsEnum(TableStatus)
+    @IsOptional()
+    status?: TableStatus;
 }
 
 
@@ -21,4 +27,9 @@ export class UpdateTableDto {
   @IsOptional()
   @IsString()
   location?: string;
+
+    // 🔥 optional status
+    @IsEnum(TableStatus)
+    @IsOptional()
+    status?: TableStatus;
 }

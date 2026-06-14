@@ -27,13 +27,13 @@ import { diskStorage } from 'multer';
 import { existsSync, unlink } from 'fs';
 
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
 
-      @Roles(UserRole.ADMIN)
+      // @Roles(UserRole.ADMIN)
  @Post()
   @UseInterceptors(
     FileInterceptor('image_url', {

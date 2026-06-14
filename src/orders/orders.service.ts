@@ -7,38 +7,59 @@ import { CreateOrderDto } from 'src/validators/orders.validator';
 import { UpdateOrderDto } from 'src/validators/orders.validator';
 import { OrderStatus } from './orders.enum';
 import { OrdersGateway } from './orders.gateway';
- import { OrderItem } from 'src/order_items/order_items.entity';
+//  import { OrderItem } from 'src/order_items/order_items.entity';
 import { Warehouse } from '../warehouse/warehouse.entity';
 import { Recipe } from '../recipes/recipes.entity';
+import { TablesGateway } from 'src/tables/tabels.TablesGateway ';
+import { Table } from 'src/tables/tabels.entity';
+import { TableStatus } from 'src/tables/table.enum';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private orderRepo: Repository<Order>,
-
+    @InjectRepository(Table)     
+    private tableRepo: Repository<Table>,
     @InjectRepository(Warehouse)
     private warehouseRepo: Repository<Warehouse>,
 
     @InjectRepository(Recipe)
     private recipeRepo: Repository<Recipe>,
 
-     @InjectRepository(OrderItem) // 🟢 qo‘shdik
-     private orderItemRepo: Repository<OrderItem>,
+
+    //  @InjectRepository(OrderItem) // 🟢 qo‘shdik
+    //  private orderItemRepo: Repository<OrderItem>,
+    private tablesGateway: TablesGateway,
 
     private readonly ordersGateway: OrdersGateway, 
   ) {}
 
+
   async create(dto: CreateOrderDto): Promise<Order> {
     const order = this.orderRepo.create(dto);
     const savedOrder = await this.orderRepo.save(order);
-
+  
+    // ✅ Table statusini busy ga o'zgartirish
+    if (dto.tableId) {
+      await this.tableRepo.update(dto.tableId, { status: TableStatus.Busy });
+  
+      // WebSocket orqali real-time yangilash
+      const updatedTable = await this.tableRepo.findOne({
+        where: { id: dto.tableId },
+        // ❌ relations: ['category'] — olib tashlandi
+      });
+      if (updatedTable) {
+        this.tablesGateway.emitTableStatusUpdate(updatedTable);
+      }
+    }
+  
     // 🖨️ Printerga yuborish
     this.ordersGateway.sendNewOrder(savedOrder);
-
+  
     return savedOrder;
-  }
-
+  }  
+  
   
 
 
@@ -119,7 +140,6 @@ private async decreaseStockByRecipe(order: Order) {
 
 
 
-  
 async updateStatus(orderId: number, status: OrderStatus): Promise<Order> {
   const order = await this.findOne(orderId);
   order.status = status;
@@ -131,6 +151,23 @@ async updateStatus(orderId: number, status: OrderStatus): Promise<Order> {
 
     // 🖨️ Order printerga yuboriladi
     this.ordersGateway.sendOrderToPrint(savedOrder);
+  }
+
+  // ✅ PAID yoki CANCELLED bo'lsa table free ga qaytadi
+  if (
+    (status === OrderStatus.PAID || status === OrderStatus.CANCELLED) &&
+    savedOrder.table?.id
+  ) {
+    await this.tableRepo.update(savedOrder.table.id, { status: TableStatus.Free });
+
+    const updatedTable = await this.tableRepo.findOne({
+      where: { id: savedOrder.table.id },
+      // ❌ relations: ['category'] — olib tashlandi
+    });
+
+    if (updatedTable) {
+      this.tablesGateway.emitTableStatusUpdate(updatedTable);
+    }
   }
 
   return savedOrder;
