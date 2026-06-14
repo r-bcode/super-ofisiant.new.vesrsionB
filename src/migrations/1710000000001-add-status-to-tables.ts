@@ -7,14 +7,14 @@ export class AddStatusToTables1710000000001 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      ALTER TABLE "tables"
+      ALTER TABLE "tables_mi"
       ADD COLUMN "status" "tables_status_enum" NOT NULL DEFAULT 'Free'
     `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      ALTER TABLE "tables"
+      ALTER TABLE "tables_mi"
       DROP COLUMN "status"
     `);
 
