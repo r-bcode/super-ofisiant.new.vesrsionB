@@ -13,7 +13,7 @@ import { TableStatus } from './table.enum';
 import { forwardRef, Inject } from '@nestjs/common';
 
 @WebSocketGateway(5851, { namespace: '/tables', cors: true })
-export class TablesGateway {
+export class  TablesGateway {
   @WebSocketServer()
   server: Server;
 

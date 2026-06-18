@@ -302,7 +302,7 @@ async getSalesByCategory(): Promise<{ category: string; total: number }[]> {
     .leftJoin('item.product', 'product')
     .leftJoin('product.category', 'category')
     .select('category.name', 'category')
-    .addSelect('SUM(item.price)', 'total') // ��� FIX SHU
+    .addSelect('SUM(item.price)', 'total') // ��� FIX SHU
     .groupBy('category.name')
     .getRawMany();
 
@@ -357,4 +357,228 @@ async getDailySalesInRange(from: string, to: string) {
     const payment = await this.findOne(id);
     await this.paymentRepo.remove(payment);
   }
+
+  async getWaiterEfficiency(from?: string, to?: string): Promise<{
+    name: string;
+    totalOrders: number;
+    totalSales: number;
+    avgServiceMinutes: number;
+    bonus: number;
+  }[]> {
+    const startDate = from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const endDate = to ? new Date(to) : new Date();
+    endDate.setHours(23, 59, 59, 999);
+  
+    const result = await this.paymentRepo
+    .createQueryBuilder('payment')
+    .leftJoin('payment.user', 'user')
+    .leftJoin('payment.order', 'order')
+    .select('user.name', 'name')
+    .addSelect('COUNT(DISTINCT payment.id)', 'totalOrders')
+    .addSelect('SUM(payment.total)', 'totalSales')
+    .addSelect(`
+      AVG(
+        EXTRACT(EPOCH FROM (payment.createdAt - order.createdAt)) / 60
+      )
+    `, 'avgServiceMinutes')
+    .where('payment.createdAt BETWEEN :start AND :end', {
+      start: startDate,
+      end: endDate,
+    })
+    .andWhere('order.createdAt IS NOT NULL')
+    .groupBy('user.name')
+    .orderBy('SUM(payment.total)', 'DESC')
+    .getRawMany();
+     
+    return result.map(r => {
+      const totalSales = Math.round(Number(r.totalSales) || 0);
+      return {
+        name: r.name ?? 'Noma\'lum',
+        totalOrders: Number(r.totalOrders) || 0,
+        totalSales,
+        avgServiceMinutes: r.avgServiceMinutes
+          ? Math.round(Number(r.avgServiceMinutes))
+          : 0,
+        bonus: Math.round(totalSales * 0.1), // 10% bonus
+      };
+    });
+  }
+
+  async getSalesByWeekday(days = 30): Promise<
+  { day: string; avgTotal: number; avgOrders: number; totalDays: number }[]
+> {
+  const from = new Date();
+  from.setDate(from.getDate() - days);
+  from.setHours(0, 0, 0, 0);
+
+  const result = await this.paymentRepo
+    .createQueryBuilder('payment')
+    .select('EXTRACT(DOW FROM payment.createdAt)::int', 'dow') // 0=Yakshanba, 1=Dushanba...
+    .addSelect('SUM(payment.total)', 'totalSum')
+    .addSelect('COUNT(payment.id)', 'totalOrders')
+    .addSelect(
+      `COUNT(DISTINCT TO_CHAR(payment.createdAt, 'YYYY-MM-DD'))`,
+      'totalDays'
+    )
+    .where('payment.createdAt >= :from', { from })
+    .groupBy('EXTRACT(DOW FROM payment.createdAt)::int')
+    .orderBy('dow', 'ASC')
+    .getRawMany();
+
+  // PostgreSQL: 0=Yakshanba, 1=Dushanba ... 6=Shanba
+  const dayNames = [
+    'Yakshanba',
+    'Dushanba',
+    'Seshanba',
+    'Chorshanba',
+    'Payshanba',
+    'Juma',
+    'Shanba',
+  ];
+
+  const map = new Map(result.map(r => [Number(r.dow), r]));
+
+  // Dushanbadan boshlaymiz (1→6→0)
+  const order = [1, 2, 3, 4, 5, 6, 0];
+
+  return order.map(dow => {
+    const row = map.get(dow);
+    const totalDays = Number(row?.totalDays) || 1;
+    return {
+      day: dayNames[dow],
+      avgTotal: row ? Math.round(Number(row.totalSum) / totalDays) : 0,
+      avgOrders: row ? Math.round(Number(row.totalOrders) / totalDays) : 0,
+      totalDays: row ? totalDays : 0,
+    };
+  });
+}
+
+async compareTodayVsYesterday(): Promise<{
+  today: number;
+  yesterday: number;
+  diffAmount: number;
+  diffPercent: number;
+  trend: 'up' | 'down' | 'same';
+}> {
+  const now = new Date();
+
+  // Bugun: 00:00 → hozirgi vaqt
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
+
+  // Kecha: 00:00 → xuddi hozirgi soat/daqiqa
+  const yesterdayStart = new Date(now);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+  yesterdayStart.setHours(0, 0, 0, 0);
+
+  const yesterdayUntilSameTime = new Date(now);
+  yesterdayUntilSameTime.setDate(yesterdayUntilSameTime.getDate() - 1);
+
+  const [todayResult, yesterdayResult] = await Promise.all([
+    this.paymentRepo
+      .createQueryBuilder('payment')
+      .select('SUM(payment.total)', 'total')
+      .where('payment.createdAt BETWEEN :start AND :end', {
+        start: todayStart,
+        end: now,
+      })
+      .getRawOne(),
+
+    this.paymentRepo
+      .createQueryBuilder('payment')
+      .select('SUM(payment.total)', 'total')
+      .where('payment.createdAt BETWEEN :start AND :end', {
+        start: yesterdayStart,
+        end: yesterdayUntilSameTime, // ✅ xuddi shu soatgacha
+      })
+      .getRawOne(),
+  ]);
+
+  const today = Math.round(Number(todayResult?.total) || 0);
+  const yesterday = Math.round(Number(yesterdayResult?.total) || 0);
+  const diffAmount = today - yesterday;
+  const diffPercent = yesterday > 0
+    ? Math.round((diffAmount / yesterday) * 100)
+    : 100;
+
+  return {
+    today,
+    yesterday,
+    diffAmount,
+    diffPercent,
+    trend: diffAmount > 0 ? 'up' : diffAmount < 0 ? 'down' : 'same',
+  };
+}
+
+async getAverageCheckByDay(from: string, to: string) {
+  const startDate = new Date(from + 'T00:00:00');      // ✅ local time
+  const endDate = new Date(to + 'T23:59:59.999');      // ✅ local time
+
+  const result = await this.paymentRepo
+    .createQueryBuilder('payment')
+    .select("TO_CHAR(payment.createdAt AT TIME ZONE 'Asia/Tashkent', 'YYYY-MM-DD')", 'date')  // ✅ Toshkent vaqti
+    .addSelect('SUM(payment.total)', 'totalSales')
+    .addSelect('COUNT(payment.id)', 'ordersCount')
+    .addSelect('AVG(payment.total)', 'avgCheck')
+    .where('payment.createdAt BETWEEN :from AND :to', { from: startDate, to: endDate })
+    .groupBy("TO_CHAR(payment.createdAt AT TIME ZONE 'Asia/Tashkent', 'YYYY-MM-DD')")
+    .orderBy('date', 'ASC')
+    .getRawMany();
+
+  const map = new Map(result.map(r => [r.date, r]));
+
+  const out: { date: string; totalSales: number; ordersCount: number; avgCheck: number }[] = [];
+  const cur = new Date(from + 'T00:00:00');            // ✅ local time
+  const last = new Date(to + 'T00:00:00');             // ✅ local time
+
+  while (cur <= last) {
+    // ✅ local date → string (toISOString emas!)
+    const key = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
+    const row = map.get(key);
+    out.push({
+      date: key,
+      totalSales: row ? Math.round(Number(row.totalSales)) : 0,
+      ordersCount: row ? Number(row.ordersCount) : 0,
+      avgCheck: row ? Math.round(Number(row.avgCheck)) : 0,
+    });
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  return out;
+}
+
+async getAverageSalesByHour(days = 30): Promise<
+{ hour: number; avgTotal: number; avgOrders: number }[]
+> {
+const from = new Date();
+from.setDate(from.getDate() - days);
+from.setHours(0, 0, 0, 0);
+
+const result = await this.paymentRepo
+  .createQueryBuilder('payment')
+  .select('EXTRACT(HOUR FROM payment.createdAt)::int', 'hour')
+  .addSelect('SUM(payment.total)', 'totalSum')
+  .addSelect('COUNT(payment.id)', 'totalOrders')
+  .addSelect(
+    `COUNT(DISTINCT TO_CHAR(payment.createdAt, 'YYYY-MM-DD'))`,
+    'activeDays', // o'sha soatda hech bo'lmasa 1 ta to'lov bo'lgan kunlar soni
+  )
+  .where('payment.createdAt >= :from', { from })
+  .groupBy('EXTRACT(HOUR FROM payment.createdAt)::int')
+  .orderBy('hour', 'ASC')
+  .getRawMany();
+
+const map = new Map(result.map(r => [Number(r.hour), r]));
+
+return Array.from({ length: 24 }, (_, i) => {
+  const row = map.get(i);
+  const activeDays = Number(row?.activeDays) || 1;
+  return {
+    hour: i,
+    avgTotal: row ? Math.round(Number(row.totalSum) / activeDays) : 0,
+    avgOrders: row ? Math.round(Number(row.totalOrders) / activeDays) : 0,
+  };
+});
+}
+
 }

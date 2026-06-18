@@ -135,4 +135,38 @@ async getTotalSalesUntilToday() {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.paymentsService.remove(id);
   }
+
+  @Get('sales/average-check')
+  getAverageCheckByDay(
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    const toDate = to ?? new Date().toISOString().slice(0, 10);
+    const fromDate = from ?? new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    return this.paymentsService.getAverageCheckByDay(fromDate, toDate);
+  }
+  
+  @Get('sales/compare-today-yesterday')
+  compareTodayVsYesterday() {
+    return this.paymentsService.compareTodayVsYesterday();
+  }
+  
+  
+  @Get('sales/by-weekday')
+  getSalesByWeekday(@Query('days') days: string) {
+    return this.paymentsService.getSalesByWeekday(days ? Number(days) : 30);
+  }
+  
+  @Get('sales/waiter-efficiency')
+  getWaiterEfficiency(
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+  ) {
+    return this.paymentsService.getWaiterEfficiency(from, to);
+  }
+
+  @Get('sales/by-hour/average')
+  getAverageSalesByHour(@Query('days') days: string) {
+    return this.paymentsService.getAverageSalesByHour(days ? Number(days) : 30);
+  }
 }

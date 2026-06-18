@@ -122,4 +122,20 @@ async getTopProducts(
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.orderItemsService.remove(id);
   }
+
+
+  
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('top/by-period')
+getTopProductsByPeriod(@Query('period') period: 'today' | 'yesterday') {
+  return this.orderItemsService.getTopProductsByPeriod(period ?? 'today');
+}
+
+@UseGuards(JwtAuthGuard)
+@Roles(UserRole.ADMIN)
+@Get('top/by-range')
+getTopProductsByRange(@Query('range') range: 'week' | 'month') {
+  return this.orderItemsService.getTopProductsByRange(range ?? 'week');
+}
 }

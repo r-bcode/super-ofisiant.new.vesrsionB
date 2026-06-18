@@ -175,4 +175,90 @@ async getItemsByCategory(categoryName: string): Promise<OrderItem[]> {
     const item = await this.findOne(id);
     await this.itemRepo.remove(item);
   }
+
+  async getTopProductsByPeriod(period: 'today' | 'yesterday'): Promise<
+  { productId: number; name: string; total_sold: number; total_revenue: number }[]
+> {
+  const now = new Date();
+  let start: Date;
+  let end: Date;
+
+  if (period === 'today') {
+    start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+    end = new Date(now);
+  } else {
+    start = new Date(now);
+    start.setDate(start.getDate() - 1);
+    start.setHours(0, 0, 0, 0);
+    end = new Date(now);
+    end.setDate(end.getDate() - 1);
+    end.setHours(23, 59, 59, 999);
+  }
+
+  const result = await this.itemRepo
+    .createQueryBuilder('item')
+    .leftJoin('item.product', 'product')
+    .leftJoin('item.order', 'order')
+    .leftJoin('order.payments', 'payment')
+    .select('product.id', 'productId')
+    .addSelect('product.name', 'name')
+    .addSelect('SUM(item.quantity)', 'total_sold')
+    .addSelect('SUM(item.price)', 'total_revenue')
+    .where('payment.createdAt BETWEEN :start AND :end', { start, end })
+    .andWhere('item.status != :status', { status: 'canceled' })
+    .andWhere('product.isIngredient = false')
+    .groupBy('product.id')
+    .addGroupBy('product.name')
+    .orderBy('total_sold', 'DESC')
+    .limit(10)
+    .getRawMany();
+
+  return result.map(r => ({
+    productId: Number(r.productId),
+    name: r.name,
+    total_sold: Math.round(Number(r.total_sold) || 0),
+    total_revenue: Math.round(Number(r.total_revenue) || 0),
+  }));
+}
+
+
+async getTopProductsByRange(range: 'week' | 'month'): Promise<
+  { productId: number; name: string; total_sold: number; total_revenue: number }[]
+> {
+  const now = new Date();
+  const start = new Date(now);
+
+  if (range === 'week') {
+    start.setDate(start.getDate() - 7);
+  } else {
+    start.setDate(start.getDate() - 30);
+  }
+  start.setHours(0, 0, 0, 0);
+
+  const result = await this.itemRepo
+    .createQueryBuilder('item')
+    .leftJoin('item.product', 'product')
+    .leftJoin('item.order', 'order')
+    .leftJoin('order.payments', 'payment')
+    .select('product.id', 'productId')
+    .addSelect('product.name', 'name')
+    .addSelect('SUM(item.quantity)', 'total_sold')
+    .addSelect('SUM(item.price)', 'total_revenue')
+    .where('payment.createdAt BETWEEN :start AND :end', { start, end: now })
+    .andWhere('item.status != :status', { status: 'canceled' })
+    .andWhere('product.isIngredient = false')
+    .groupBy('product.id')
+    .addGroupBy('product.name')
+    .orderBy('total_sold', 'DESC')
+    .limit(10)
+    .getRawMany();
+
+  return result.map(r => ({
+    productId: Number(r.productId),
+    name: r.name,
+    total_sold: Math.round(Number(r.total_sold) || 0),
+    total_revenue: Math.round(Number(r.total_revenue) || 0),
+  }));
+}
 }

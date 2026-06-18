@@ -1,7 +1,7 @@
 // src/orders/orders.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { Order } from './orders.entity';
 import { CreateOrderDto } from 'src/validators/orders.validator';
 import { UpdateOrderDto } from 'src/validators/orders.validator';
@@ -10,9 +10,9 @@ import { OrdersGateway } from './orders.gateway';
 //  import { OrderItem } from 'src/order_items/order_items.entity';
 import { Warehouse } from '../warehouse/warehouse.entity';
 import { Recipe } from '../recipes/recipes.entity';
-import { TablesGateway } from 'src/tables/tabels.TablesGateway ';
 import { Table } from 'src/tables/tabels.entity';
 import { TableStatus } from 'src/tables/table.enum';
+import { TablesGateway } from 'src/tables/tabels.TablesGateway';
 
 @Injectable()
 export class OrdersService {
@@ -199,4 +199,21 @@ async updateStatus(orderId: number, status: OrderStatus): Promise<Order> {
     const order = await this.findOne(id);
     await this.orderRepo.remove(order);
   }
+
+  async findRecent5DaysOrders(): Promise<Order[]> {
+    // Bugungi kundan 5 kun oldingi sanani hisoblaymiz
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+    fiveDaysAgo.setHours(0, 0, 0, 0); // Kun boshidan boshlab hisoblash uchun
+  
+    return this.orderRepo.find({
+      where: {
+        createdAt: MoreThanOrEqual(fiveDaysAgo),
+      },
+      relations: ['table', 'user', 'payments'], // user (ofitsiyant) va table bog'liqliklari shart
+      order: {
+        createdAt: 'DESC', // Eng oxirgilari birinchi turadi
+      },
+    });
+}
 }

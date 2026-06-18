@@ -70,4 +70,10 @@ export class OrdersController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.ordersService.remove(id);
   }
+
+  @UseGuards(JwtAuthGuard)
+@Get('dashboard/recent-5-days')
+findRecent5DaysOrders() {
+  return this.ordersService.findRecent5DaysOrders();
+}
 }
